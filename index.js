@@ -1,10 +1,57 @@
+const { response } = require('express');
 const express=require('express');
 const app=express();
 const PORT=3001;
 const products =require('./data.js')
+/*
+Middleware
+Middleware are functions that execute during the request to the server. 
+Those functions have access to the request and response parameters 
+so can perform many things to enhance/automate API functionalities
+The middleware sit in between the request and response
+user request -> midlleware -> response
+*/
+const logger=(request, res, next)=>{
+    console.log(request.url)
+    console.log(request.params)
+    console.log(request.query)
+    next()
+}
+const auth  = (req, res, next) => {
+    const user = req.query.user
+    if (user === 'admin') {
+        req.user = { name: 'admin', id: 1 }
+        next()
+    } else {
+        res.status(401).send('Unauthorized')
+    }
+}
+
+app.use(logger) // execute your middleware for all requests
+app.use('/api', logger)//You can also execute your middleware only for request that are under a specific path ex: /api
+app.use([logger, auth])//Multiple middleware can be use
+//se van a ejecutar en el mimso orden que estan escritas
+
+/*
+When the user visit /about Express will execute the app.get(). 
+But just before, it will execute the middleware specified in the app.use().
+Once the middleware is executed the next() will continue the app.get() execution
+
+Here is the sequence of execution:
+
+client request → /about ⇒ logger() → app.get() → client response
+
+When creating a middleware you are not force to use the next(). 
+You can send your own response and override/omit the app.get() completely
+*/
 
 app.listen(PORT, ()=>{
     console.log("Server is running ", PORT)
+})
+
+app.get('/about', (request, response)=>{
+    console.log(request.user)
+    return response.send('About page')
 })
 
 app.get('/api/products', (request, response)=>{
@@ -56,3 +103,5 @@ app.get('/api/query', (request, response)=>{
     }
     response.json(product);
 })
+
+

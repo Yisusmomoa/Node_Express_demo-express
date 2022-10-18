@@ -1,0 +1,22 @@
+Create your first Middleware
+Let's assume we want a function to log the url address of the request every time a page is visit.
+
+Without middleware we could have done this with code like that:
+
+app.get('/about', (req, res) => {
+    console.log(req.url)
+    console.log(req.params)
+    console.log(req.query)
+    return res.send('About Page')
+})
+
+That will work just fine but what if we have 100 different routes? 
+We cannot copy/paste those console.log() lines to every routes.
+
+One solution is to put those logs in middleware function
+const logger  = (req, res, next) => {
+    console.log(req.url)
+    console.log(req.params)
+    console.log(req.query)
+    next()
+}s
