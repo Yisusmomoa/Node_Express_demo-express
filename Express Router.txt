@@ -1,0 +1,26 @@
+By convention, Express developper split code in different files and folders to optimized code organisation.
+
+The first and most obvious thing to do is to split the route and the route implementation codes.
+
+
+app.get('/api/products/:productID', (req, res) => {
+            const id = Number(req.params.productID)
+            const product = products.find(product => product.id === id)
+
+                if (!product) {
+                return res.status(404).send('Product not found')
+            }
+            res.json(product)
+})
+
+Router help to create a list of all your apps routes and associate them to a controller file 
+that contain the implementation code.
+
+First step is to create a file to put all our app routes. 
+For exemple : /routes/products.js can contain all routes related to the product resource
+
+And next step we will create a controller file to put all our routes implementation code. 
+For exemple: /controllers/products.js
+
+
+

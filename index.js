@@ -3,6 +3,7 @@ const express=require('express');
 const app=express();
 const PORT=3001;
 const products =require('./data.js')
+const productsRouter=require('./routes/products.js')
 /*
 Middleware
 Middleware are functions that execute during the request to the server. 
@@ -55,31 +56,6 @@ app.get('/about', (request, response)=>{
     return response.send('About page')
 })
 
-app.get('/api/products', (request, response)=>{
-    // const partialProducts=products.map(element=>{
-    //     return {id:element.id, name:element.name}
-    // })
-    response.json(products)
-})
-
-app.get('/api/products/:productId', (request, response)=>{
-    const id=Number(request.params.productId);
-    /*
-    Route parameters
-    What if you want to load only product with id 1. 
-    The convention want to route to be something like: api/products/1
-
-    Espress have a easy way to manage that kind of request
-    */
-    const product=products.find(element=>element.id===id)
-    if(!product){
-        return response.status(404).json({
-            Message: "Product not found"
-        })
-    }
-    response.json(product)
-})
-
 //Query String
 /*
 Las Query String o cadenas de consultas es un término que 
@@ -105,41 +81,8 @@ app.get('/api/query', (request, response)=>{
     response.json(product);
 })
 
-app.post('/api/products', (request, response)=>{
-    const newProduct={
-        id:products.length+1,
-        name:request.body.name,
-        price:request.body.price
-    }
-    products.push(newProduct)
-    response.status(201).json(newProduct)
-})
-
-app.put('/api/products/:productId', (request, response)=>{
-    const id=Number(request.params.productId);
-    const index=products.findIndex(element=>element.id===id)
-    if (index===-1) {
-        response.status(404).json({
-            Message: "Product not found"
-        })
-    }
-    const updateProduct={
-        id:products[index].id,
-        name:request.body.name,
-        price:request.body.price
-    }
-    products[index]=updateProduct
-    response.status(200).json("Product updated")
-})
-
-app.delete('/api/products/:productId', (request, response)=>{
-    const id=Number(request.params.productId);
-    const index=products.findIndex(element=>element.id===id);
-    if (index===-1) {
-        response.status(404).json({
-            Message: "Product not found"
-        })
-    }
-    products.splice(index, 1);
-    response.status(200).json("Product deleted")
-})
+app.use('/api/products', productsRouter);
+/*
+Noted, the app.use() have routes prefix in '/api/products' 
+that mean all url path in the routes file will include that prefix automatically.
+*/
