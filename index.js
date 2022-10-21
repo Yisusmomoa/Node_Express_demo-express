@@ -1,4 +1,4 @@
-const { response } = require('express');
+
 const express=require('express');
 const app=express();
 const PORT=3001;
@@ -26,10 +26,11 @@ const auth  = (req, res, next) => {
         res.status(401).send('Unauthorized')
     }
 }
-
-app.use(logger) // execute your middleware for all requests
-app.use('/api', logger)//You can also execute your middleware only for request that are under a specific path ex: /api
-app.use([logger, auth])//Multiple middleware can be use
+app.use(express.json())
+app.use(logger)
+//app.use(logger) // execute your middleware for all requests
+//app.use('/api', logger)//You can also execute your middleware only for request that are under a specific path ex: /api
+//app.use([logger, auth])//Multiple middleware can be use
 //se van a ejecutar en el mimso orden que estan escritas
 
 /*
@@ -55,10 +56,10 @@ app.get('/about', (request, response)=>{
 })
 
 app.get('/api/products', (request, response)=>{
-    const partialProducts=products.map(element=>{
-        return {id:element.id, name:element.name}
-    })
-    response.json(partialProducts)
+    // const partialProducts=products.map(element=>{
+    //     return {id:element.id, name:element.name}
+    // })
+    response.json(products)
 })
 
 app.get('/api/products/:productId', (request, response)=>{
@@ -104,4 +105,41 @@ app.get('/api/query', (request, response)=>{
     response.json(product);
 })
 
+app.post('/api/products', (request, response)=>{
+    const newProduct={
+        id:products.length+1,
+        name:request.body.name,
+        price:request.body.price
+    }
+    products.push(newProduct)
+    response.status(201).json(newProduct)
+})
 
+app.put('/api/products/:productId', (request, response)=>{
+    const id=Number(request.params.productId);
+    const index=products.findIndex(element=>element.id===id)
+    if (index===-1) {
+        response.status(404).json({
+            Message: "Product not found"
+        })
+    }
+    const updateProduct={
+        id:products[index].id,
+        name:request.body.name,
+        price:request.body.price
+    }
+    products[index]=updateProduct
+    response.status(200).json("Product updated")
+})
+
+app.delete('/api/products/:productId', (request, response)=>{
+    const id=Number(request.params.productId);
+    const index=products.findIndex(element=>element.id===id);
+    if (index===-1) {
+        response.status(404).json({
+            Message: "Product not found"
+        })
+    }
+    products.splice(index, 1);
+    response.status(200).json("Product deleted")
+})
