@@ -11,15 +11,15 @@ const {
     deleteProduct
 }=require('../controllers/products')
 
-router.get('/', getProducts);
+router.get('/products/', getProducts);
 
-router.get('/:productId', getProduct);
+router.get('/products/:productId', getProduct);
 
-router.post('/', createProduct);
+router.post('/products/', createProduct);
 
-router.put('/:productId', updateProduct);
+router.put('/products/:productId', updateProduct);
 
-router.delete('/:productId', deleteProduct);
+router.delete('/products/:productId', deleteProduct);
 
 module.exports=router;
 

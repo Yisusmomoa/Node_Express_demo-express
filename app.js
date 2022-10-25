@@ -5,6 +5,7 @@ const app=express();
 
 const products=require('./data.js')
 const productsRouter=require('./routes/products.js')
+const usersRouter=require('./routes/users.js');
 
 //Send the contents of the .env file to the process.env object
 require('dotenv').config({path:"./fichier.env"})
@@ -19,6 +20,6 @@ mongoose.connect(process.env.MONGO_URI)
     .catch((err)=>console.log(err))
 
 app.use(express.json())
-app.use('/api/products', productsRouter)
+app.use('/api', [productsRouter, usersRouter])
 
 
