@@ -25,6 +25,7 @@ const getUserByEmailPassword=(req, res)=>{
         email:req.body.email,
         password:req.body.password
     })
+    
     .then(result=>res.status(200).json({result}))
     .catch(err=>res.status(500).json({msg:err}))
 }
